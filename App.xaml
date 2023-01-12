@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:FormatConverter"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary Source="ResourceDictionary.xaml"/>
     </Application.Resources>
 </Application>
