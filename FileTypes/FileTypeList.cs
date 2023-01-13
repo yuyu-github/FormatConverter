@@ -20,12 +20,18 @@ namespace FormatConverter.FileTypes
         }
 
         public static Dictionary<string, FileType> IdDictionary { get; private set; } = new();
-        public static Dictionary<string, FileType> ExtensionDictionary { get; private set; } = new();
+        public static Dictionary<string, List<FileType>> ExtensionDictionary { get; private set; } = new();
 
         static void UpdateDictionary()
         {
             IdDictionary = list.ToDictionary(t => t.Id, t => t);
-            ExtensionDictionary = list.SelectMany(t => t.Extensions, (t, e) => new { e, t }).ToDictionary(d => d.e, d => d.t);
+            
+            foreach (var type in list)
+                foreach (var ext in type.Extensions)
+                {
+                    if (ExtensionDictionary.ContainsKey(ext)) ExtensionDictionary[ext].Add(type);
+                    else ExtensionDictionary.Add(ext, new List<FileType> { type });
+                }
         }
     }
 }
