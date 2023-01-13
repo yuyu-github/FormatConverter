@@ -8,6 +8,7 @@ namespace FormatConverter.FileTypes
 {
     internal class Text : FileType
     {
+        public override string Name { get; } = "テキスト";
         public override string Id { get; } = "Text";
         public override string[] Extensions { get; } = { "txt" };
     }

@@ -8,6 +8,7 @@ namespace FormatConverter.FileTypes
 {
     public abstract class FileType
     {
+        public abstract string Name { get; }
         public abstract string Id { get; }
         public abstract string[] Extensions { get; }
 

@@ -8,6 +8,7 @@ namespace FormatConverter.FileTypes
 {
     internal class Markdown : FileType
     {
+        public override string Name { get; } = "Markdown";
         public override string Id { get; } = "Markdown";
         public override string[] Extensions { get; } = { "md" };
     }
