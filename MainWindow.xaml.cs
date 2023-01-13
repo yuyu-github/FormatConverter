@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using FormatConverter.FileTypes;
+
 namespace FormatConverter
 {
     /// <summary>
@@ -24,6 +26,15 @@ namespace FormatConverter
         {
             InitializeComponent();
             
+            InitFileTypeList();
+        }
+
+        void InitFileTypeList()
+        {
+            FileTypeList.List = new FileType[] {
+                new Text(),
+                new Markdown(),
+            };
         }
     }
 }
