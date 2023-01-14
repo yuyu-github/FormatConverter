@@ -40,8 +40,7 @@ namespace FormatConverter
 
         private void SelectInputFileButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new CommonOpenFileDialog();
-            dialog.Title = "ファイルを選択";
+            var dialog = new CommonOpenFileDialog() { Title = "ファイルを選択" };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 InputFilePathTextBox.Text = dialog.FileName;
@@ -86,6 +85,66 @@ namespace FormatConverter
                 }
 
                 if (OutputTypeListView.Items.Count > 0) OutputTypeListView.SelectedIndex = 0;
+            }
+        }
+
+        private void ConvertButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (InputTypeComboBox.SelectedIndex == -1)
+            {
+                MessageBox.Show("変換元タイプが設定されていません", "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (OutputTypeListView.SelectedIndex == -1)
+            {
+                MessageBox.Show("変換先タイプが設定されていません", "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (!File.Exists(InputFilePathTextBox.Text))
+            {
+                MessageBox.Show("変換元ファイルが存在しません", "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (!FileTypeList.IdDictionary.TryGetValue(((InputTypeComboBoxItem)InputTypeComboBox.SelectedItem).Id, out var inputType))
+            {
+                MessageBox.Show("変換元タイプがが存在しません", "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (!FileTypeList.IdDictionary.TryGetValue(((OutputTypeListViewItem)OutputTypeListView.SelectedItem).Id, out var outputType))
+            {
+                MessageBox.Show("変換先タイプがが存在しません", "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            byte[] outputData;
+            try
+            {
+                byte[] inputData = File.ReadAllBytes(InputFilePathTextBox.Text);
+                outputData = inputType.Convert(outputType.Id, inputData);
+
+            }
+            catch (ConversionException ex)
+            {
+                MessageBox.Show("変換に失敗しました\n\n" + ex.Message, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("エラーが発生しました\n\n" + ex.Message, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var dialog = new CommonSaveFileDialog() { Title = "ファイルを保存", DefaultFileName = Path.GetFileNameWithoutExtension(InputFilePathTextBox.Text) };
+            if (outputType.Extensions.Length > 0)
+            {
+                dialog.DefaultFileName += "." + outputType.Extensions[0];
+                dialog.Filters.Add(new CommonFileDialogFilter($"{outputType.Name}", outputType.Extensions[0]));
+            }
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                File.WriteAllBytes(dialog.FileName, outputData);
+                MessageBox.Show("変換が完了しました", "完了", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

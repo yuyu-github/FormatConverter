@@ -45,7 +45,9 @@
                     Margin="20,0"
                     FontSize="18"
                     Width="140"
-                    Height="40"/>
+                    Height="40"
+                    
+                    Click="ConvertButton_Click"/>
         </StackPanel>
         <ListView Name="OutputTypeListView"
                   DockPanel.Dock="Bottom">
