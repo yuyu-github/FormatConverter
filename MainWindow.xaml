@@ -14,7 +14,9 @@
         <ComboBox Name="InputTypeComboBox"
                   Visibility="Visible"
                   FontSize="15"
-                  DockPanel.Dock="Top">
+                  DockPanel.Dock="Top"
+
+                  SelectionChanged="InputTypeComboBox_SelectionChanged">
         </ComboBox>
         <DockPanel LastChildFill="True"
                    Margin="0,3,0,5"
@@ -22,10 +24,14 @@
             <Button Name="SelectInputFileButton"
                     Content="参照"
                     DockPanel.Dock="Right"
-                    Width="80"/>
+                    Width="80"
+                    
+                    Click="SelectInputFileButton_Click"/>
             <TextBox Name="InputFilePathTextBox"
                      Margin="0,0,3,0"
-                     DockPanel.Dock="Left"/>
+                     DockPanel.Dock="Left"
+                     
+                     TextChanged="InputFilePathTextBox_TextChanged"/>
         </DockPanel>
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Center"

@@ -11,7 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.IO;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 using FormatConverter.FileTypes;
 
@@ -35,6 +36,73 @@ namespace FormatConverter
                 new Text(),
                 new Markdown(),
             };
+        }
+
+        private void SelectInputFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new CommonOpenFileDialog();
+            dialog.Title = "ファイルを選択";
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                InputFilePathTextBox.Text = dialog.FileName;
+            }
+        }
+
+        private void InputFilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            InputTypeComboBox.Items.Clear();
+            if (InputFilePathTextBox.Text != "")
+            {
+                string ext = Path.GetExtension(InputFilePathTextBox.Text);
+                if (ext != "")
+                {
+                    (FileTypeList.ExtensionDictionary.TryGetValue(ext[1..], out var value) ? value : new()).ForEach(i =>
+                        InputTypeComboBox.Items.Add(new InputTypeComboBoxItem() { Text = $"{i.Name} ({ext})", Id = i.Id }));
+                        
+                }
+                else
+                {
+                    foreach (var item in FileTypeList.List) {
+                        InputTypeComboBox.Items.Add(new InputTypeComboBoxItem()
+                        { Text = $"{item.Name} ({(item.Extensions.Length > 0 ? "." + item.Extensions[0] : "")})", Id = item.Id });
+                    }
+                }
+
+                if (InputTypeComboBox.Items.Count > 0) InputTypeComboBox.SelectedIndex = 0;
+            }
+        }
+
+        private void InputTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            OutputTypeListView.Items.Clear();
+            if (InputTypeComboBox.SelectedItem != null)
+            {
+                foreach (var type in FileTypeList.IdDictionary.TryGetValue(((InputTypeComboBoxItem)InputTypeComboBox.SelectedItem).Id, out var inputType) ?
+                    inputType.GetConvertibleTypes() : new string[1])
+                {
+                    if (FileTypeList.IdDictionary.TryGetValue(type, out var outputType))
+                        OutputTypeListView.Items.Add(new OutputTypeListViewItem()
+                        { Text = $"{outputType.Name} ({(outputType.Extensions.Length > 0 ? "." + outputType.Extensions[0] : "")})", Id = outputType.Id });
+                }
+
+                if (OutputTypeListView.Items.Count > 0) OutputTypeListView.SelectedIndex = 0;
+            }
+        }
+
+        class InputTypeComboBoxItem
+        {
+            public string Text { get; set; } = "";
+            public string Id { get; set; } = "";
+
+            public override string ToString() => Text;
+        }
+
+        class OutputTypeListViewItem
+        {
+            public string Text { get; set; } = "";
+            public string Id { get; set; } = "";
+
+            public override string ToString() => Text;
         }
     }
 }
