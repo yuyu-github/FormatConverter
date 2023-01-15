@@ -137,7 +137,9 @@ namespace FormatConverter
                 return;
             }
 
-            var dialog = new CommonSaveFileDialog() { Title = "ファイルを保存", DefaultFileName = Path.GetFileNameWithoutExtension(InputFilePathTextBox.Text) };
+            var dialog = new CommonSaveFileDialog() { Title = "ファイルを保存", 
+                DefaultFileName = Path.GetFileNameWithoutExtension(InputFilePathTextBox.Text), 
+                InitialDirectory = Path.GetDirectoryName(InputFilePathTextBox.Text) };
             if (outputType.Extensions.Length > 0)
             {
                 dialog.DefaultFileName += "." + outputType.Extensions[0];
