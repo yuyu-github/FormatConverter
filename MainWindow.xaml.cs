@@ -15,6 +15,7 @@ using System.IO;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 using FormatConverter.FileTypes;
+using Type = FormatConverter.FileTypes;
 
 namespace FormatConverter
 {
@@ -35,6 +36,7 @@ namespace FormatConverter
             FileTypeList.List = new FileType[] {
                 new Text(),
                 new Markdown(),
+                new HTML(),
             };
         }
 
