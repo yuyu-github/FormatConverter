@@ -22,5 +22,13 @@ namespace FormatConverter.FileTypes
             string html = Markdig.Markdown.ToHtml(content);
             return html.GetBytes();
         }
+
+        [ConvertMethod]
+        public byte[] ToText(byte[] data)
+        {
+            string content = data.GetString();
+            string html = Markdig.Markdown.ToPlainText(content);
+            return html.GetBytes();
+        }
     }
 }
