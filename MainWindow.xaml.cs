@@ -37,6 +37,8 @@ namespace FormatConverter
                 new Text(),
                 new Markdown(),
                 new HTML(),
+                new CSV(),
+                new JSON(),
             };
         }
 
