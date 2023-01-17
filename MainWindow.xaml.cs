@@ -42,6 +42,21 @@ namespace FormatConverter
             };
         }
 
+        private void Window_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void Window_PreviewDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] paths = (string[])e.Data.GetData(DataFormats.FileDrop);
+                InputFilePathTextBox.Text = paths[0];
+            }
+        }
+
         private void SelectInputFileButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new CommonOpenFileDialog() { Title = "ファイルを選択" };

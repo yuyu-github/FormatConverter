@@ -8,7 +8,11 @@
         Title="MainWindow"
         Height="450"
         Width="800"
-        Background="#F0F0F0">
+        Background="#F0F0F0"
+        AllowDrop="True"
+        
+        PreviewDragOver="Window_PreviewDragOver"
+        PreviewDrop="Window_PreviewDrop">
     <DockPanel Margin="10"
                LastChildFill="True">
         <ComboBox Name="InputTypeComboBox"
