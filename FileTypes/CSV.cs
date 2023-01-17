@@ -9,6 +9,7 @@ using System.Data;
 using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
+using YamlDotNet.Serialization;
 
 using FormatConverter.Functions;
 
@@ -69,6 +70,35 @@ namespace FormatConverter.FileTypes
                 WriteIndented = true,
             };
             return JsonSerializer.Serialize(jsonData, options).GetBytes();
+        }
+
+        [ConvertMethod]
+        public byte[] ToYAML(byte[] data)
+        {
+            var dataTable = LoadCSV(data.GetString());
+
+            var yamlData = new List<Dictionary<string, object?>>();
+            foreach (DataRow row in dataTable.Rows)
+            {
+                var dict = new Dictionary<string, object?>();
+                foreach (DataColumn column in dataTable.Columns)
+                {
+                    object? value = null;
+                    object item = row[column];
+                    if (item is string)
+                    {
+                        string raw = (string)item;
+                        if (long.TryParse(raw, out var longValue)) value = longValue;
+                        else if (decimal.TryParse(raw, out var decimalValue)) value = decimalValue;
+                        else if (raw == "") value = null;
+                        else value = raw;
+                    }
+                    if (value != null) dict.Add(column.ColumnName, value);
+                }
+                yamlData.Add(dict);
+            }
+
+            return new Serializer().Serialize(yamlData).GetBytes();
         }
     }
 }

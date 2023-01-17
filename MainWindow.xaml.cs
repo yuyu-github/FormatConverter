@@ -39,6 +39,7 @@ namespace FormatConverter
                 new HTML(),
                 new CSV(),
                 new JSON(),
+                new YAML(),
             };
         }
 
