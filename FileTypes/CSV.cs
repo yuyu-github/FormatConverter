@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Xml;
 using System.Threading.Tasks;
 using System.IO;
 using System.Data;
@@ -99,6 +100,46 @@ namespace FormatConverter.FileTypes
             }
 
             return new Serializer().Serialize(yamlData).GetBytes();
+        }
+
+        [ConvertMethod]
+        public byte[] ToXML(byte[] data)
+        {
+            var dataTable = LoadCSV(data.GetString());
+
+            var xml = new XmlDocument();
+            var root = xml.CreateElement("root");
+            xml.AppendChild(root);
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                var itemElem = xml.CreateElement("item");
+                foreach (DataColumn column in dataTable.Columns)
+                {
+                    string? value = null;
+                    object item = row[column];
+                    if (item is string)
+                    {
+                        value = (string)item;
+                        if (value == "") value = null;
+                    }
+                    if (value != null)
+                    {
+                        var valueElem = xml.CreateElement(column.ColumnName);
+                        valueElem.InnerText = value;
+                        itemElem.AppendChild(valueElem);
+                    }
+                }
+                root.AppendChild(itemElem);
+            }
+
+            var stream = new MemoryStream();
+            xml.Save(XmlWriter.Create(stream, new XmlWriterSettings()
+            {
+                Indent = true,
+            }));
+            stream.Position = 0;
+            return new StreamReader(stream).ReadToEnd().GetBytes();
         }
     }
 }
