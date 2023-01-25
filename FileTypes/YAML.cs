@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FormatConverter.FileTypes
 {
-    internal class YAML : FileType
+    internal class Yaml : FileType
     {
         public override string Name { get; } = "YAML";
         public override string Id { get; } = "YAML";

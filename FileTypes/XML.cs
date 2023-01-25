@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FormatConverter.FileTypes
 {
-    internal class XML : FileType
+    internal class Xml : FileType
     {
         public override string Name { get; } = "XML";
         public override string Id { get; } = "XML";

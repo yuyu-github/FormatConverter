@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FormatConverter.FileTypes
 {
-    internal class HTML : FileType
+    internal class Html : FileType
     {
         public override string Name { get; } = "HTML";
         public override string Id { get; } = "HTML";

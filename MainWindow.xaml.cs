@@ -36,11 +36,11 @@ namespace FormatConverter
             FileTypeList.List = new FileType[] {
                 new Text(),
                 new Markdown(),
-                new HTML(),
-                new CSV(),
-                new JSON(),
-                new YAML(),
-                new XML(),
+                new Html(),
+                new Csv(),
+                new Json(),
+                new Yaml(),
+                new Xml(),
             };
         }
 

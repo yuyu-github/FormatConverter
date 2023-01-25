@@ -11,7 +11,7 @@ using FormatConverter.Functions;
 
 namespace FormatConverter.FileTypes
 {
-    internal class JSON : FileType
+    internal class Json : FileType
     {
         public override string Name { get; } = "JSON";
         public override string Id { get; } = "JSON";

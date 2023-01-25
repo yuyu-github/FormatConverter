@@ -16,7 +16,7 @@ using FormatConverter.Functions;
 
 namespace FormatConverter.FileTypes
 {
-    internal class CSV : FileType
+    internal class Csv : FileType
     {
         public override string Name { get; } = "CSV";
         public override string Id { get; } = "CSV";
