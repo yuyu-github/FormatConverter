@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,7 +41,8 @@ namespace FormatConverter.FileTypes
             }
             catch (TargetInvocationException e)
             {
-                throw e.InnerException ?? new Exception();
+                ExceptionDispatchInfo.Throw(e.InnerException ?? new());
+                throw;
             }
         }
     }

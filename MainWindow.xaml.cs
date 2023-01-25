@@ -152,7 +152,11 @@ namespace FormatConverter
             }
             catch (Exception ex)
             {
-                MessageBox.Show("エラーが発生しました\n\n" + ex.Message, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                string stackTrace = "";
+#if DEBUG
+                stackTrace = "\n" + ex.StackTrace;
+#endif
+                MessageBox.Show($"エラーが発生しました\n\n{ex.Message}{stackTrace}", "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
