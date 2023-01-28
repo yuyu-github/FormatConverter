@@ -5,9 +5,11 @@ using System.Text;
 using System.Text.Json;
 using System.IO;
 using System.Threading.Tasks;
+using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 
 using FormatConverter.Functions;
+using FormatConverter.Functions.FileTypes;
 
 namespace FormatConverter.FileTypes
 {
@@ -34,6 +36,8 @@ namespace FormatConverter.FileTypes
                     JsonValueKind.Array => new YamlSequenceNode(),
                     _ => throw new ConversionException("不正な値があります")
                 };
+                if (jsonElem.ValueKind == JsonValueKind.String && ((YamlScalarNode)yamlNode).GetYamlValueType() != YamlValueType.Str)
+                    ((YamlScalarNode)yamlNode).Style = ScalarStyle.DoubleQuoted;
 
                 if (jsonElem.ValueKind == JsonValueKind.Object)
                 {
