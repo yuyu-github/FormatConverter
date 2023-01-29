@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.IO;
+using System.Xml;
 using System.Threading.Tasks;
 using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
@@ -66,6 +67,53 @@ namespace FormatConverter.FileTypes
             yaml.Save(writer, false);
 
             return writer.ToString().GetBytes();
+        }
+
+        [ConvertMethod]
+        public byte[] ToXML(byte[] data)
+        {
+            XmlElement JsonElemToXmlElem(JsonElement jsonElem, XmlElement baseElem)
+            {
+                switch (jsonElem.ValueKind)
+                {
+                    case JsonValueKind.Object:
+                        foreach (var item in jsonElem.EnumerateObject())
+                        {
+                            var elem = baseElem.OwnerDocument.CreateElement(XmlFunctions.ConvertToCorrectName(item.Name));
+                            baseElem.AppendChild(JsonElemToXmlElem(item.Value, elem));
+                        }
+                        break;
+                    case JsonValueKind.Array:
+                        foreach (var item in jsonElem.EnumerateArray())
+                        {
+                            var elem = baseElem.OwnerDocument.CreateElement("item");
+                            baseElem.AppendChild(JsonElemToXmlElem(item, elem));
+                        }
+                        break;
+                    case JsonValueKind.String:
+                        baseElem.InnerText = jsonElem.GetString() ?? "";
+                        break;
+                    default:
+                        baseElem.InnerText = jsonElem.GetRawText();
+                        break;
+                }
+
+                return baseElem;
+            }
+
+            var jsonData = JsonDocument.Parse(data.GetString());
+            var xmlDoc = new XmlDocument();
+            var root = xmlDoc.CreateElement("root");
+            xmlDoc.AppendChild(root);
+            JsonElemToXmlElem(jsonData.RootElement, root);
+
+            var stream = new MemoryStream();
+            xmlDoc.Save(XmlWriter.Create(stream, new XmlWriterSettings()
+            {
+                Indent = true,
+            }));
+            stream.Position = 0;
+            return new StreamReader(stream).ReadToEnd().GetBytes();
         }
     }
 }
