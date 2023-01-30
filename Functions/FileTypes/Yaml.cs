@@ -163,5 +163,17 @@ namespace FormatConverter.Functions.FileTypes
         {
             return DateTime.Parse(yaml.Value);
         }
+
+        public static DateTimeOffset GetDateTimeOffsetValue(this YamlScalarNode yaml)
+        {
+            return DateTimeOffset.Parse(yaml.Value);
+        }
+
+        public static string GetDateTimeStringValue(this YamlScalarNode yaml)
+        {
+            var dt = yaml.GetDateTimeValue();
+            if (dt.Kind != DateTimeKind.Unspecified) return yaml.GetDateTimeOffsetValue().ToString();
+            else return dt.ToString();
+        }
     }
 }

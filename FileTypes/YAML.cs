@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.IO;
 using System.Threading.Tasks;
+using System.Xml;
 using YamlDotNet.RepresentationModel;
 
 using FormatConverter.Functions;
@@ -97,6 +98,113 @@ namespace FormatConverter.FileTypes
             if (((JsonArray)json).Count == 1) json = ((JsonArray)json).ElementAt(0) ?? json;
 
             return json.ToJsonString(new JsonSerializerOptions() { WriteIndented = true }).GetBytes();
+        }
+
+        [ConvertMethod]
+        public byte[] ToXML(byte[] data)
+        {
+            XmlElement YamlNodeToXmlElem(YamlNode yamlNode, XmlElement baseElem)
+            {
+                switch (yamlNode.NodeType)
+                {
+                    case YamlNodeType.Scalar:
+                        var type = ((YamlScalarNode)yamlNode).GetYamlValueType();
+                        baseElem.InnerText = type switch
+                        {
+                            YamlValueType.Null => "null",
+                            YamlValueType.Int => ((YamlScalarNode)yamlNode).GetInt64Value().ToString(),
+                            YamlValueType.Float => ((YamlScalarNode)yamlNode).GetDecimalValue().ToString(),
+                            YamlValueType.Inf => ((YamlScalarNode)yamlNode).Value.StartsWith("-") ? "-Infinity" : "Infinity",
+                            YamlValueType.NaN => "NaN",
+                            YamlValueType.Bool => ((YamlScalarNode)yamlNode).GetBooleanValue().ToString(),
+                            YamlValueType.Str => ((YamlScalarNode)yamlNode).GetStringValue(),
+                            YamlValueType.Timestamp => ((YamlScalarNode)yamlNode).GetDateTimeStringValue().ToString(),
+                            YamlValueType.Others => ((YamlScalarNode)yamlNode).GetStringValue(),
+                            _ => throw new ConversionException("不正な値があります")
+                        };
+                        break;
+                    case YamlNodeType.Mapping:
+                        foreach (var (key, value) in (YamlMappingNode)yamlNode)
+                        {
+                            string keyStr = key.GetString();
+                            bool isMerge = true;
+                            if (keyStr == "<<" && (value is YamlMappingNode || value is YamlSequenceNode))
+                            {
+                                void Merge(YamlMappingNode mapping)
+                                {
+                                    foreach (var (mergeKey, mergeValue) in mapping)
+                                    {
+                                        string mergeKeyStr = mergeKey.GetString();
+                                        var mergeElem = baseElem.GetElementsByTagName(mergeKeyStr)?[0];
+                                        if (mergeElem is not null) mergeElem.ParentNode?.RemoveChild(mergeElem);
+                                        var elem = baseElem.OwnerDocument.CreateElement(XmlFunctions.ConvertToCorrectName(mergeKeyStr));
+                                        baseElem.AppendChild(YamlNodeToXmlElem(mergeValue, elem));
+                                    }
+                                }
+
+                                if (value is YamlMappingNode) Merge((YamlMappingNode)value);
+                                else
+                                {
+                                    if (((YamlSequenceNode)value).Aggregate(true, (result, i) => result && (i is YamlMappingNode)))
+                                    {
+                                        foreach (var item in (YamlSequenceNode)value)
+                                        {
+                                            Merge((YamlMappingNode)item);
+                                        }
+                                    }
+                                    else isMerge = false;
+                                }
+                            }
+                            else isMerge = false;
+                            
+                            if (!isMerge) 
+                            {
+                                var elem = baseElem.OwnerDocument.CreateElement(XmlFunctions.ConvertToCorrectName(keyStr));
+                                baseElem.AppendChild(YamlNodeToXmlElem(value, elem));
+                            }
+                        }
+                        break;
+                    case YamlNodeType.Sequence:
+                        foreach (var item in (YamlSequenceNode)yamlNode)
+                        {
+                            var elem = baseElem.OwnerDocument.CreateElement("item");
+                            baseElem.AppendChild(YamlNodeToXmlElem(item, elem));
+                        }
+                        break;
+                    default:
+                        throw new ConversionException("不正な値があります");
+                }
+
+                return baseElem;
+            }
+
+            var yaml = new YamlStream();
+            yaml.Load(new StringReader(data.GetString()));
+            var xmlDoc = new XmlDocument();
+            var root = xmlDoc.CreateElement("root");
+            xmlDoc.AppendChild(root);
+
+            if (yaml.Documents.Count == 1)
+            {
+                YamlNodeToXmlElem(yaml.Documents[0].RootNode, root);
+            }
+            else
+            {
+                foreach (var doc in yaml.Documents)
+                {
+                    var docElem = xmlDoc.CreateElement("document");
+                    root.AppendChild(docElem);
+                    YamlNodeToXmlElem(doc.RootNode, docElem);
+                }
+            }
+
+            var stream = new MemoryStream();
+            xmlDoc.Save(XmlWriter.Create(stream, new XmlWriterSettings()
+            {
+                Indent = true,
+            }));
+            stream.Position = 0;
+            return new StreamReader(stream).ReadToEnd().GetBytes();
         }
     }
 }
