@@ -24,6 +24,8 @@ namespace FormatConverter
     /// </summary>
     public partial class MainWindow : Window
     {
+        string currentSelectedFileExt = "";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -70,25 +72,31 @@ namespace FormatConverter
 
         private void InputFilePathTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            InputTypeComboBox.Items.Clear();
-            if (InputFilePathTextBox.Text != "")
+            string ext = Path.GetExtension(InputFilePathTextBox.Text);
+            if (currentSelectedFileExt != ext)
             {
-                string ext = Path.GetExtension(InputFilePathTextBox.Text);
-                if (ext != "")
-                {
-                    (FileTypeList.ExtensionDictionary.TryGetValue(ext[1..], out var value) ? value : new()).ForEach(i =>
-                        InputTypeComboBox.Items.Add(new InputTypeComboBoxItem() { Text = $"{i.Name} ({ext})", Id = i.Id }));
-                        
-                }
-                else
-                {
-                    foreach (var item in FileTypeList.List) {
-                        InputTypeComboBox.Items.Add(new InputTypeComboBoxItem()
-                        { Text = $"{item.Name} ({(item.Extensions.Length > 0 ? "." + item.Extensions[0] : "")})", Id = item.Id });
-                    }
-                }
+                currentSelectedFileExt = ext;
 
-                if (InputTypeComboBox.Items.Count > 0) InputTypeComboBox.SelectedIndex = 0;
+                InputTypeComboBox.Items.Clear();
+                if (InputFilePathTextBox.Text != "")
+                {
+                    if (ext != "")
+                    {
+                        (FileTypeList.ExtensionDictionary.TryGetValue(ext[1..], out var value) ? value : new()).ForEach(i =>
+                            InputTypeComboBox.Items.Add(new InputTypeComboBoxItem() { Text = $"{i.Name} ({ext})", Id = i.Id }));
+
+                    }
+                    else
+                    {
+                        foreach (var item in FileTypeList.List)
+                        {
+                            InputTypeComboBox.Items.Add(new InputTypeComboBoxItem()
+                            { Text = $"{item.Name} ({(item.Extensions.Length > 0 ? "." + item.Extensions[0] : "")})", Id = item.Id });
+                        }
+                    }
+
+                    if (InputTypeComboBox.Items.Count > 0) InputTypeComboBox.SelectedIndex = 0;
+                }
             }
         }
 
