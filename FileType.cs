@@ -20,7 +20,7 @@ namespace FormatConverter.FileTypes
         public string[] GetConvertibleTypes()
         {
             return GetType().GetMethods()
-                .Where(m => m.GetCustomAttribute<ConvertMethodAttribute>() != null && m.Name.StartsWith("To") && m.Name.Length > 2 &&
+                .Where(m => m.GetCustomAttribute<ConvertMethodAttribute>() is not null && m.Name.StartsWith("To") && m.Name.Length > 2 &&
                     m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType == typeof(byte[]) && m.ReturnType == typeof(byte[]))
                 .Select(m => m.Name[2..]).ToArray();
         }
@@ -28,7 +28,7 @@ namespace FormatConverter.FileTypes
         public bool IsConvertible(string id)
         {
             var method = GetType().GetMethod("To" + id);
-            return method != null && method.GetCustomAttribute<ConvertMethodAttribute>() != null &&
+            return method is not null && method.GetCustomAttribute<ConvertMethodAttribute>() != null &&
                 method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(byte[]) && method.ReturnType == typeof(byte[]);
         }
 

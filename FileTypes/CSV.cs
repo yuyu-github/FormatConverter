@@ -61,7 +61,7 @@ namespace FormatConverter.FileTypes
                         else if (raw == "") value = null;
                         else value = raw;
                     }
-                    if (value != null) dict.Add(column.ColumnName, value);
+                    if (value is not null) dict.Add(column.ColumnName, value);
                 }
                 jsonData.Add(dict);
             }
@@ -94,7 +94,7 @@ namespace FormatConverter.FileTypes
                         else if (raw == "") value = null;
                         else value = raw;
                     }
-                    if (value != null) dict.Add(column.ColumnName, value);
+                    if (value is not null) dict.Add(column.ColumnName, value);
                 }
                 yamlData.Add(dict);
             }
@@ -123,7 +123,7 @@ namespace FormatConverter.FileTypes
                         value = (string)item;
                         if (value == "") value = null;
                     }
-                    if (value != null)
+                    if (value is not null)
                     {
                         var valueElem = xml.CreateElement(column.ColumnName);
                         valueElem.InnerText = value;

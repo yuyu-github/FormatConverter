@@ -40,7 +40,7 @@ namespace FormatConverter.Functions.FileTypes
         {
             var raw = yaml.Value;
 
-            if (yaml.Tag != null)
+            if (yaml.Tag is not null)
             {
                 return yaml.Tag switch
                 {

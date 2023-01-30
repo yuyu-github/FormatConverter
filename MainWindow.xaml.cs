@@ -103,7 +103,7 @@ namespace FormatConverter
         private void InputTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             OutputTypeListView.Items.Clear();
-            if (InputTypeComboBox.SelectedItem != null)
+            if (InputTypeComboBox.SelectedItem is not null)
             {
                 foreach (var type in FileTypeList.IdDictionary.TryGetValue(((InputTypeComboBoxItem)InputTypeComboBox.SelectedItem).Id, out var inputType) ?
                     inputType.GetConvertibleTypes() : new string[1])
