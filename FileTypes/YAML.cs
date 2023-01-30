@@ -38,7 +38,7 @@ namespace FormatConverter.FileTypes
                             YamlValueType.NaN => JsonValue.Create("NaN"),
                             YamlValueType.Bool => JsonValue.Create(((YamlScalarNode)yamlNode).GetBooleanValue()),
                             YamlValueType.Str => JsonValue.Create(((YamlScalarNode)yamlNode).GetStringValue()),
-                            YamlValueType.Timestamp => JsonValue.Create(((YamlScalarNode)yamlNode).GetDateTimeValue()),
+                            YamlValueType.Timestamp => JsonValue.Create(((YamlScalarNode)yamlNode).GetDateTimeStringValue()),
                             YamlValueType.Others => JsonValue.Create(((YamlScalarNode)yamlNode).GetStringValue()),
                             _ => throw new ConversionException("不正な値があります")
                         };
