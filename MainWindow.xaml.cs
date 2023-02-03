@@ -44,6 +44,11 @@ namespace FormatConverter
                 new Yaml(),
                 new Xml(),
                 new Toml(),
+                new Jpeg(),
+                new Png(),
+                new Gif(),
+                new Tiff(),
+                new Bmp(),
             };
         }
 
