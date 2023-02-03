@@ -43,6 +43,7 @@ namespace FormatConverter
                 new Json(),
                 new Yaml(),
                 new Xml(),
+                new Toml(),
             };
         }
 
