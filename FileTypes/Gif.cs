@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing.Imaging;
+
+using FormatConverter.Functions.FileTypeGroups;
 
 namespace FormatConverter.FileTypes
 {
@@ -11,5 +14,29 @@ namespace FormatConverter.FileTypes
         public override string Name { get; } = "GIF";
         public override string Id { get; } = "GIF";
         public override string[] Extensions { get; } = { "gif" };
+
+        [ConvertMethod]
+        public byte[] ToPNG(byte[] data)
+        {
+            return Image.ChangeFormat(data, ImageFormat.Png);
+        }
+
+        [ConvertMethod]
+        public byte[] ToJPEG(byte[] data)
+        {
+            return Image.ChangeFormat(data, ImageFormat.Jpeg);
+        }
+
+        [ConvertMethod]
+        public byte[] ToTIFF(byte[] data)
+        {
+            return Image.ChangeFormat(data, ImageFormat.Tiff);
+        }
+
+        [ConvertMethod]
+        public byte[] ToBMP(byte[] data)
+        {
+            return Image.ChangeFormat(data, ImageFormat.Bmp);
+        }
     }
 }
