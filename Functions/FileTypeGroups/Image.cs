@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using ImageProcessor;
-using ImageProcessor.Plugins.WebP.Imaging.Formats;
+using ImageMagick;
 
 namespace FormatConverter.Functions.FileTypeGroups
 {
@@ -23,26 +22,12 @@ namespace FormatConverter.Functions.FileTypeGroups
             }
         }
 
-        public static byte[] ChangeFormatToWebP(byte[] data)
+        public static byte[] ChangeFormat(byte[] data, MagickFormat format)
         {
-            var factory = new ImageFactory();
-            factory.Load(data);
-            factory.Format(new WebPFormat());
-
+            var image = new MagickImage(data);
             using (var stream = new MemoryStream())
             {
-                factory.Save(stream);
-                return stream.ToArray();
-            }
-        }
-
-        public static byte[] ChangeFormatFromWebP(byte[] data, ImageFormat format)
-        {
-            Bitmap bitmap;
-            using (var stream = new MemoryStream(data)) bitmap = (Bitmap)new WebPFormat().Load(stream);
-            using (var stream = new MemoryStream())
-            {
-                bitmap.Save(stream, format);
+                image.Write(stream, format);
                 return stream.ToArray();
             }
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing.Imaging;
+using ImageMagick;
 
 using FormatConverter.Functions.FileTypeGroups;
 
@@ -18,31 +18,31 @@ namespace FormatConverter.FileTypes
         [ConvertMethod]
         public byte[] ToPNG(byte[] data)
         {
-            return Image.ChangeFormatFromWebP(data, ImageFormat.Png);
+            return Image.ChangeFormat(data, MagickFormat.Png);
         }
 
         [ConvertMethod]
         public byte[] ToJPEG(byte[] data)
         {
-            return Image.ChangeFormatFromWebP(data, ImageFormat.Jpeg);
+            return Image.ChangeFormat(data, MagickFormat.Jpeg);
         }
 
         [ConvertMethod]
         public byte[] ToGIF(byte[] data)
         {
-            return Image.ChangeFormatFromWebP(data, ImageFormat.Gif);
+            return Image.ChangeFormat(data, MagickFormat.Gif);
         }
 
         [ConvertMethod]
         public byte[] ToTIFF(byte[] data)
         {
-            return Image.ChangeFormatFromWebP(data, ImageFormat.Tiff);
+            return Image.ChangeFormat(data, MagickFormat.Tiff);
         }
 
         [ConvertMethod]
         public byte[] ToBMP(byte[] data)
         {
-            return Image.ChangeFormatFromWebP(data, ImageFormat.Bmp);
+            return Image.ChangeFormat(data, MagickFormat.Bmp);
         }
     }
 }
