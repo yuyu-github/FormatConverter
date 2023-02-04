@@ -186,7 +186,6 @@ namespace FormatConverter
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 File.WriteAllBytes(dialog.FileName, outputData);
-                MessageBox.Show("変換が完了しました", "完了", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
