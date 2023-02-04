@@ -132,10 +132,11 @@ namespace FormatConverter.FileTypes
 
             var toml = Nett.Toml.ReadString(data.GetString());
             var yaml = new YamlStream(new YamlDocument(TomlObjectToYamlNode(toml)));
-            var writer = new StringWriter();
-            yaml.Save(writer, false);
-
-            return writer.ToString().GetBytes();
+            using (var writer = new StringWriter())
+            {
+                yaml.Save(writer, false);
+                return writer.ToString().GetBytes();
+            }
         }
     }
 }

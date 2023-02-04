@@ -133,13 +133,16 @@ namespace FormatConverter.FileTypes
                 root.AppendChild(itemElem);
             }
 
-            var stream = new MemoryStream();
-            xml.Save(XmlWriter.Create(stream, new XmlWriterSettings()
+            using (var stream = new MemoryStream())
+            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings()
             {
                 Indent = true,
-            }));
-            stream.Position = 0;
-            return new StreamReader(stream).ReadToEnd().GetBytes();
+            }))
+            {
+                xml.Save(writer);
+                stream.Position = 0;
+                using (var reader = new StreamReader(stream)) return reader.ReadToEnd().GetBytes();
+            }
         }
     }
 }

@@ -62,11 +62,12 @@ namespace FormatConverter.FileTypes
             }
 
             var jsonData = JsonDocument.Parse(data.GetString());
-            var writer = new StringWriter();
             var yaml = new YamlStream(new YamlDocument(JsonElemToYamlNode(jsonData.RootElement)));
-            yaml.Save(writer, false);
-
-            return writer.ToString().GetBytes();
+            using (var writer = new StringWriter())
+            {
+                yaml.Save(writer, false);
+                return writer.ToString().GetBytes();
+            }
         }
 
         [ConvertMethod]
@@ -107,13 +108,16 @@ namespace FormatConverter.FileTypes
             xmlDoc.AppendChild(root);
             JsonElemToXmlElem(jsonData.RootElement, root);
 
-            var stream = new MemoryStream();
-            xmlDoc.Save(XmlWriter.Create(stream, new XmlWriterSettings()
+            using (var stream = new MemoryStream())
+            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings()
             {
                 Indent = true,
-            }));
-            stream.Position = 0;
-            return new StreamReader(stream).ReadToEnd().GetBytes();
+            }))
+            {
+                xmlDoc.Save(writer);
+                stream.Position = 0;
+                using (var reader = new StreamReader(stream)) return reader.ReadToEnd().GetBytes();
+            }
         }
     }
 }

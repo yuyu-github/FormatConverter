@@ -88,7 +88,7 @@ namespace FormatConverter.FileTypes
             }
 
             var yaml = new YamlStream();
-            yaml.Load(new StringReader(data.GetString()));
+            using (var reader = new StringReader(data.GetString())) yaml.Load(reader);
 
             JsonNode json = new JsonArray();
             foreach (var doc in yaml.Documents)
@@ -179,7 +179,7 @@ namespace FormatConverter.FileTypes
             }
 
             var yaml = new YamlStream();
-            yaml.Load(new StringReader(data.GetString()));
+            using (var reader = new StringReader(data.GetString())) yaml.Load(reader);
             var xmlDoc = new XmlDocument();
             var root = xmlDoc.CreateElement("root");
             xmlDoc.AppendChild(root);
@@ -198,13 +198,16 @@ namespace FormatConverter.FileTypes
                 }
             }
 
-            var stream = new MemoryStream();
-            xmlDoc.Save(XmlWriter.Create(stream, new XmlWriterSettings()
+            using (var stream = new MemoryStream())
+            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings()
             {
                 Indent = true,
-            }));
-            stream.Position = 0;
-            return new StreamReader(stream).ReadToEnd().GetBytes();
+            }))
+            {
+                xmlDoc.Save(writer);
+                stream.Position = 0;
+                using (var reader = new StreamReader(stream)) return reader.ReadToEnd().GetBytes();
+            }
         }
     }
 }

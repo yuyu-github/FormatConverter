@@ -29,14 +29,17 @@ namespace FormatConverter.Functions.FileTypeGroups
             factory.Load(data);
             factory.Format(new WebPFormat());
 
-            var stream = new MemoryStream();
-            factory.Save(stream);
-            return stream.ToArray();
+            using (var stream = new MemoryStream())
+            {
+                factory.Save(stream);
+                return stream.ToArray();
+            }
         }
 
         public static byte[] ChangeFormatFromWebP(byte[] data, ImageFormat format)
         {
-            var bitmap = (Bitmap)new WebPFormat().Load(new MemoryStream(data));
+            Bitmap bitmap;
+            using (var stream = new MemoryStream(data)) bitmap = (Bitmap)new WebPFormat().Load(stream);
             using (var stream = new MemoryStream())
             {
                 bitmap.Save(stream, format);
