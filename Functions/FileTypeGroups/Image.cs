@@ -33,5 +33,15 @@ namespace FormatConverter.Functions.FileTypeGroups
             factory.Save(stream);
             return stream.ToArray();
         }
+
+        public static byte[] ChangeFormatFromWebP(byte[] data, ImageFormat format)
+        {
+            var bitmap = (Bitmap)new WebPFormat().Load(new MemoryStream(data));
+            using (var stream = new MemoryStream())
+            {
+                bitmap.Save(stream, format);
+                return stream.ToArray();
+            }
+        }
     }
 }
