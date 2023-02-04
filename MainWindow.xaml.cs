@@ -48,6 +48,7 @@ namespace FormatConverter
                 new Png(),
                 new Gif(),
                 new WebP(),
+                new Svg(),
                 new Tiff(),
                 new Bmp(),
             };
