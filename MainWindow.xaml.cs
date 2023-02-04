@@ -47,6 +47,7 @@ namespace FormatConverter
                 new Jpeg(),
                 new Png(),
                 new Gif(),
+                new WebP(),
                 new Tiff(),
                 new Bmp(),
             };

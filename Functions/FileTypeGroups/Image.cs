@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using ImageProcessor;
+using ImageProcessor.Plugins.WebP.Imaging.Formats;
 
 namespace FormatConverter.Functions.FileTypeGroups
 {
@@ -19,6 +21,17 @@ namespace FormatConverter.Functions.FileTypeGroups
                 bitmap.Save(stream, format);
                 return stream.ToArray();
             }
+        }
+
+        public static byte[] ChangeFormatToWebP(byte[] data)
+        {
+            var factory = new ImageFactory();
+            factory.Load(data);
+            factory.Format(new WebPFormat());
+
+            var stream = new MemoryStream();
+            factory.Save(stream);
+            return stream.ToArray();
         }
     }
 }

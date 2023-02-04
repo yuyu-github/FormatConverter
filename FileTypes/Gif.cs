@@ -38,5 +38,11 @@ namespace FormatConverter.FileTypes
         {
             return Image.ChangeFormat(data, ImageFormat.Bmp);
         }
+
+        [ConvertMethod]
+        public byte[] ToWebP(byte[] data)
+        {
+            return Image.ChangeFormatToWebP(data);
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing.Imaging;
+using System.IO;
 
 using FormatConverter.Functions.FileTypeGroups;
 
@@ -37,6 +38,12 @@ namespace FormatConverter.FileTypes
         public byte[] ToBMP(byte[] data)
         {
             return Image.ChangeFormat(data, ImageFormat.Bmp);
+        }
+
+        [ConvertMethod]
+        public byte[] ToWebP(byte[] data)
+        {
+            return Image.ChangeFormatToWebP(data);
         }
     }
 }
