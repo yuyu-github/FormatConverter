@@ -13,7 +13,7 @@ namespace FormatConverter.FileTypes
     {
         public override string Name { get; } = "SVG";
         public override string Id { get; } = "SVG";
-        public override string[] Extensions { get; } = { "svg", "svgz" };
+        public override string[] Extensions { get; } = { "svg" };
 
         [ConvertMethod]
         public byte[] ToPNG(byte[] data)

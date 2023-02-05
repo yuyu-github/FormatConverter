@@ -46,5 +46,11 @@ namespace FormatConverter.FileTypes
         {
             return Image.ChangeFormat(data, MagickFormat.WebP);
         }
+
+        [ConvertMethod]
+        public byte[] ToSVG(byte[] data)
+        {
+            return Image.ChangeFormat(data, MagickFormat.Svg);
+        }
     }
 }

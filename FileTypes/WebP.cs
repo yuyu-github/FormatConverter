@@ -44,5 +44,11 @@ namespace FormatConverter.FileTypes
         {
             return Image.ChangeFormat(data, MagickFormat.Bmp);
         }
+
+        [ConvertMethod]
+        public byte[] ToSVG(byte[] data)
+        {
+            return Image.ChangeFormat(data, MagickFormat.Svg);
+        }
     }
 }
