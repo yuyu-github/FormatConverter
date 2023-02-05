@@ -154,31 +154,12 @@ namespace FormatConverter
                 return;
             }
 
-            byte[] outputData;
-            try
+            var dialog = new CommonSaveFileDialog()
             {
-                byte[] inputData = File.ReadAllBytes(InputFilePathTextBox.Text);
-                outputData = inputType.Convert(outputType.Id, inputData);
-
-            }
-            catch (ConversionException ex)
-            {
-                MessageBox.Show("変換に失敗しました\n\n" + ex.Message, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            catch (Exception ex)
-            {
-                string stackTrace = "";
-#if DEBUG
-                stackTrace = "\n" + ex.StackTrace;
-#endif
-                MessageBox.Show($"エラーが発生しました\n\n{ex.Message}{stackTrace}", "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            var dialog = new CommonSaveFileDialog() { Title = "ファイルを保存", 
-                DefaultFileName = Path.GetFileNameWithoutExtension(InputFilePathTextBox.Text), 
-                InitialDirectory = Path.GetDirectoryName(InputFilePathTextBox.Text) };
+                Title = "ファイルを保存",
+                DefaultFileName = Path.GetFileNameWithoutExtension(InputFilePathTextBox.Text),
+                InitialDirectory = Path.GetDirectoryName(InputFilePathTextBox.Text)
+            };
             if (outputType.Extensions.Length > 0)
             {
                 dialog.DefaultFileName += "." + outputType.Extensions[0];
@@ -186,7 +167,24 @@ namespace FormatConverter
             }
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                File.WriteAllBytes(dialog.FileName, outputData);
+                try
+                {
+                    inputType.Convert(outputType.Id, InputFilePathTextBox.Text, dialog.FileName);
+                }
+                catch (ConversionException ex)
+                {
+                    MessageBox.Show("変換に失敗しました\n\n" + ex.Message, "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    string stackTrace = "";
+#if DEBUG
+                    stackTrace = "\n" + ex.StackTrace;
+#endif
+                    MessageBox.Show($"エラーが発生しました\n\n{ex.Message}{stackTrace}", "エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
             }
         }
 
