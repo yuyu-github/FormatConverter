@@ -5,14 +5,10 @@ using System.Text;
 using System.Text.Json;
 using System.Xml;
 using System.Threading.Tasks;
-using System.IO;
 using System.Data;
-using System.Globalization;
-using CsvHelper;
-using CsvHelper.Configuration;
 using YamlDotNet.Serialization;
 
-using FormatConverter.Functions;
+using FormatConverter.Functions.FileTypes;
 
 namespace FormatConverter.FileTypes
 {
@@ -22,28 +18,10 @@ namespace FormatConverter.FileTypes
         public override string Id { get; } = "CSV";
         public override string[] Extensions { get; } = { "csv" };
 
-        public DataTable LoadCSV(string data)
-        {
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                AllowComments = true,
-                MissingFieldFound = null,
-            };
-
-            using (var stream = new StringReader(data))
-            using (var csv = new CsvReader(stream, config))
-            using (var csvData = new CsvDataReader(csv))
-            {
-                var dataTable = new DataTable();
-                try { dataTable.Load(csvData); } catch { throw new ConversionException("CSVの読み込みに失敗しました"); }
-                return dataTable;
-            }
-        }
-
         [ConvertMethod]
         public string ToJSON(string data)
         {
-            var dataTable = LoadCSV(data);
+            var dataTable = CsvFunctions.Load(data);
 
             var jsonData = new List<Dictionary<string, object?>>();
             foreach (DataRow row in dataTable.Rows)
@@ -76,7 +54,7 @@ namespace FormatConverter.FileTypes
         [ConvertMethod]
         public string ToYAML(string data)
         {
-            var dataTable = LoadCSV(data);
+            var dataTable = CsvFunctions.Load(data);
 
             var yamlData = new List<Dictionary<string, object?>>();
             foreach (DataRow row in dataTable.Rows)
@@ -105,7 +83,7 @@ namespace FormatConverter.FileTypes
         [ConvertMethod(UseOutputFilePath = true)]
         public void ToXML(string data, string output)
         {
-            var dataTable = LoadCSV(data);
+            var dataTable = CsvFunctions.Load(data);
 
             var xml = new XmlDocument();
             var root = xml.CreateElement("root");
