@@ -21,7 +21,7 @@ namespace FormatConverter.FileTypes
         public override string[] Extensions { get; } = { "yml", "yaml" };
 
         [ConvertMethod]
-        public byte[] ToJSON(byte[] data)
+        public string ToJSON(string data)
         {
             JsonNode? YamlNodeToJsonNode(YamlNode yamlNode)
             {
@@ -88,7 +88,7 @@ namespace FormatConverter.FileTypes
             }
 
             var yaml = new YamlStream();
-            using (var reader = new StringReader(data.GetString())) yaml.Load(reader);
+            using (var reader = new StringReader(data)) yaml.Load(reader);
 
             JsonNode json = new JsonArray();
             foreach (var doc in yaml.Documents)
@@ -97,11 +97,11 @@ namespace FormatConverter.FileTypes
             }
             if (((JsonArray)json).Count == 1) json = ((JsonArray)json).ElementAt(0) ?? json;
 
-            return json.ToJsonString(new JsonSerializerOptions() { WriteIndented = true }).GetBytes();
+            return json.ToJsonString(new JsonSerializerOptions() { WriteIndented = true });
         }
 
-        [ConvertMethod]
-        public byte[] ToXML(byte[] data)
+        [ConvertMethod(UseOutputFilePath = true)]
+        public void ToXML(string data, string output)
         {
             XmlElement YamlNodeToXmlElem(YamlNode yamlNode, XmlElement baseElem)
             {
@@ -179,7 +179,7 @@ namespace FormatConverter.FileTypes
             }
 
             var yaml = new YamlStream();
-            using (var reader = new StringReader(data.GetString())) yaml.Load(reader);
+            using (var reader = new StringReader(data)) yaml.Load(reader);
             var xmlDoc = new XmlDocument();
             var root = xmlDoc.CreateElement("root");
             xmlDoc.AppendChild(root);
@@ -198,15 +198,12 @@ namespace FormatConverter.FileTypes
                 }
             }
 
-            using (var stream = new MemoryStream())
-            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings()
+            using (var writer = XmlWriter.Create(output, new XmlWriterSettings()
             {
                 Indent = true,
             }))
             {
                 xmlDoc.Save(writer);
-                stream.Position = 0;
-                using (var reader = new StreamReader(stream)) return reader.ReadToEnd().GetBytes();
             }
         }
     }

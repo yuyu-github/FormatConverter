@@ -15,40 +15,40 @@ namespace FormatConverter.FileTypes
         public override string Id { get; } = "WebP";
         public override string[] Extensions { get; } = { "webp" };
 
-        [ConvertMethod]
-        public byte[] ToPNG(byte[] data)
+        [ConvertMethod(UseInputFilePath = true, UseOutputFilePath = true)]
+        public void ToPNG(string input, string output)
         {
-            return Image.ChangeFormat(data, MagickFormat.Png);
+            Image.ChangeFormat(input, output, MagickFormat.Png);
         }
 
-        [ConvertMethod]
-        public byte[] ToJPEG(byte[] data)
+        [ConvertMethod(UseInputFilePath = true, UseOutputFilePath = true)]
+        public void ToJPEG(string input, string output)
         {
-            return Image.ChangeFormat(data, MagickFormat.Jpeg);
+            Image.ChangeFormat(input, output, MagickFormat.Jpeg);
         }
 
-        [ConvertMethod]
-        public byte[] ToGIF(byte[] data)
+        [ConvertMethod(UseInputFilePath = true, UseOutputFilePath = true)]
+        public void ToGIF(string input, string output)
         {
-            return Image.ChangeFormat(data, MagickFormat.Gif);
+            Image.ChangeFormat(input, output, MagickFormat.Gif);
         }
 
-        [ConvertMethod]
-        public byte[] ToTIFF(byte[] data)
+        [ConvertMethod(UseInputFilePath = true, UseOutputFilePath = true)]
+        public void ToTIFF(string input, string output)
         {
-            return Image.ChangeFormat(data, MagickFormat.Tiff);
+            Image.ChangeFormat(input, output, MagickFormat.Tiff);
         }
 
-        [ConvertMethod]
-        public byte[] ToBMP(byte[] data)
+        [ConvertMethod(UseInputFilePath = true, UseOutputFilePath = true)]
+        public void ToBMP(string input, string output)
         {
-            return Image.ChangeFormat(data, MagickFormat.Bmp);
+            Image.ChangeFormat(input, output, MagickFormat.Bmp);
         }
 
-        [ConvertMethod]
-        public byte[] ToSVG(byte[] data)
+        [ConvertMethod(UseInputFilePath = true, UseOutputFilePath = true)]
+        public void ToSVG(string input, string output)
         {
-            return Image.ChangeFormat(data, MagickFormat.Svg);
+            Image.ChangeFormat(input, output, MagickFormat.Svg);
         }
     }
 }

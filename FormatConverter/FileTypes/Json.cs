@@ -20,8 +20,8 @@ namespace FormatConverter.FileTypes
         public override string Id { get; } = "JSON";
         public override string[] Extensions { get; } = { "json" };
 
-        [ConvertMethod]
-        public byte[] ToYAML(byte[] data)
+        [ConvertMethod(UseOutputFilePath = true)]
+        public void ToYAML(string data, string output)
         {
             YamlNode JsonElemToYamlNode(JsonElement jsonElem)
             {
@@ -61,17 +61,16 @@ namespace FormatConverter.FileTypes
                 return yamlNode;
             }
 
-            var jsonData = JsonDocument.Parse(data.GetString());
+            var jsonData = JsonDocument.Parse(data);
             var yaml = new YamlStream(new YamlDocument(JsonElemToYamlNode(jsonData.RootElement)));
-            using (var writer = new StringWriter())
+            using (var writer = new StreamWriter(output))
             {
                 yaml.Save(writer, false);
-                return writer.ToString().GetBytes();
             }
         }
 
-        [ConvertMethod]
-        public byte[] ToXML(byte[] data)
+        [ConvertMethod(UseOutputFilePath = true)]
+        public void ToXML(string data, string output)
         {
             XmlElement JsonElemToXmlElem(JsonElement jsonElem, XmlElement baseElem)
             {
@@ -102,21 +101,18 @@ namespace FormatConverter.FileTypes
                 return baseElem;
             }
 
-            var jsonData = JsonDocument.Parse(data.GetString());
+            var jsonData = JsonDocument.Parse(data);
             var xmlDoc = new XmlDocument();
             var root = xmlDoc.CreateElement("root");
             xmlDoc.AppendChild(root);
             JsonElemToXmlElem(jsonData.RootElement, root);
 
-            using (var stream = new MemoryStream())
-            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings()
+            using (var writer = XmlWriter.Create(output, new XmlWriterSettings()
             {
                 Indent = true,
             }))
             {
                 xmlDoc.Save(writer);
-                stream.Position = 0;
-                using (var reader = new StreamReader(stream)) return reader.ReadToEnd().GetBytes();
             }
         }
     }

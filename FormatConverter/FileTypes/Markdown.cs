@@ -15,19 +15,15 @@ namespace FormatConverter.FileTypes
         public override string[] Extensions { get; } = { "md" };
 
         [ConvertMethod]
-        public byte[] ToHTML(byte[] data)
+        public string ToHTML(string data)
         {
-            string content = data.GetString();
-            string html = Markdig.Markdown.ToHtml(content);
-            return html.GetBytes();
+            return Markdig.Markdown.ToHtml(data);
         }
 
         [ConvertMethod]
-        public byte[] ToText(byte[] data)
+        public string ToText(string data)
         {
-            string content = data.GetString();
-            string html = Markdig.Markdown.ToPlainText(content);
-            return html.GetBytes();
+            return Markdig.Markdown.ToPlainText(data);
         }
     }
 }

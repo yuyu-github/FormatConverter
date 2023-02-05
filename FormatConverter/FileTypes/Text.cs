@@ -16,16 +16,16 @@ namespace FormatConverter.FileTypes
         public override string[] Extensions { get; } = { "txt" };
 
         [ConvertMethod]
-        public byte[] ToMarkdown(byte[] data)
+        public string ToMarkdown(string data)
         {
-            string str = data.GetString();
+            string str = data;
             str = new Regex(@"[\\`*_}\])#+\-=.!~|$]").Replace(str, "\\$0");
             str = str.Replace("&", "&amp;");
             str = str.Replace("<", "&lt;");
             str = str.Replace(">", "&gt;");
             str = new Regex("\r?\n").Replace(str, "  \n");
             str = new Regex(@"^ ( {3,})", RegexOptions.Multiline).Replace(str, "&#32;$1");
-            return str.GetBytes();
+            return str;
         }
     }
 }

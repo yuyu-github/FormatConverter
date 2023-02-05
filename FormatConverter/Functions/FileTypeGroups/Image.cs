@@ -12,24 +12,16 @@ namespace FormatConverter.Functions.FileTypeGroups
 {
     internal static class Image
     {
-        public static byte[] ChangeFormat(byte[] data, ImageFormat format)
+        public static void ChangeFormat(string input, string output, ImageFormat format)
         {
-            var bitmap = new Bitmap(new MemoryStream(data));
-            using (var stream = new MemoryStream())
-            {
-                bitmap.Save(stream, format);
-                return stream.ToArray();
-            }
+            var bitmap = new Bitmap(input);
+            bitmap.Save(output, format);
         }
 
-        public static byte[] ChangeFormat(byte[] data, MagickFormat format)
+        public static void ChangeFormat(string input, string output, MagickFormat format)
         {
-            var image = new MagickImage(data);
-            using (var stream = new MemoryStream())
-            {
-                image.Write(stream, format);
-                return stream.ToArray();
-            }
+            var image = new MagickImage(input);
+            image.Write(output, format);
         }
     }
 }

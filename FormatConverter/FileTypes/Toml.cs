@@ -22,7 +22,7 @@ namespace FormatConverter.FileTypes
         public override string[] Extensions { get; } = { "toml" };
 
         [ConvertMethod]
-        public byte[] ToJSON(byte[] data)
+        public string ToJSON(string data)
         {
             JsonNode? TomlObjectToJsonNode(TomlObject tomlObject)
             {
@@ -72,13 +72,13 @@ namespace FormatConverter.FileTypes
                 return jsonNode;
             }
 
-            var toml = Nett.Toml.ReadString(data.GetString());
+            var toml = Nett.Toml.ReadString(data);
             var json = TomlObjectToJsonNode(toml);
-            return (json?.ToJsonString(new JsonSerializerOptions() { WriteIndented = true }) ?? "").GetBytes();
+            return (json?.ToJsonString(new JsonSerializerOptions() { WriteIndented = true }) ?? "");
         }
 
-        [ConvertMethod]
-        public byte[] ToYAML(byte[] data)
+        [ConvertMethod(UseOutputFilePath = true)]
+        public void ToYAML(string data, string output)
         {
             YamlNode TomlObjectToYamlNode(TomlObject tomlObject)
             {
@@ -130,12 +130,11 @@ namespace FormatConverter.FileTypes
                 return yamlNode;
             }
 
-            var toml = Nett.Toml.ReadString(data.GetString());
+            var toml = Nett.Toml.ReadString(data);
             var yaml = new YamlStream(new YamlDocument(TomlObjectToYamlNode(toml)));
-            using (var writer = new StringWriter())
+            using (var writer = new StreamWriter(output))
             {
                 yaml.Save(writer, false);
-                return writer.ToString().GetBytes();
             }
         }
     }

@@ -41,9 +41,9 @@ namespace FormatConverter.FileTypes
         }
 
         [ConvertMethod]
-        public byte[] ToJSON(byte[] data)
+        public string ToJSON(string data)
         {
-            var dataTable = LoadCSV(data.GetString());
+            var dataTable = LoadCSV(data);
 
             var jsonData = new List<Dictionary<string, object?>>();
             foreach (DataRow row in dataTable.Rows)
@@ -70,13 +70,13 @@ namespace FormatConverter.FileTypes
             {
                 WriteIndented = true,
             };
-            return JsonSerializer.Serialize(jsonData, options).GetBytes();
+            return JsonSerializer.Serialize(jsonData, options);
         }
 
         [ConvertMethod]
-        public byte[] ToYAML(byte[] data)
+        public string ToYAML(string data)
         {
-            var dataTable = LoadCSV(data.GetString());
+            var dataTable = LoadCSV(data);
 
             var yamlData = new List<Dictionary<string, object?>>();
             foreach (DataRow row in dataTable.Rows)
@@ -99,13 +99,13 @@ namespace FormatConverter.FileTypes
                 yamlData.Add(dict);
             }
 
-            return new Serializer().Serialize(yamlData).GetBytes();
+            return new Serializer().Serialize(yamlData);
         }
 
-        [ConvertMethod]
-        public byte[] ToXML(byte[] data)
+        [ConvertMethod(UseOutputFilePath = true)]
+        public void ToXML(string data, string output)
         {
-            var dataTable = LoadCSV(data.GetString());
+            var dataTable = LoadCSV(data);
 
             var xml = new XmlDocument();
             var root = xml.CreateElement("root");
@@ -133,15 +133,12 @@ namespace FormatConverter.FileTypes
                 root.AppendChild(itemElem);
             }
 
-            using (var stream = new MemoryStream())
-            using (var writer = XmlWriter.Create(stream, new XmlWriterSettings()
+            using (var writer = XmlWriter.Create(output, new XmlWriterSettings()
             {
                 Indent = true,
             }))
             {
                 xml.Save(writer);
-                stream.Position = 0;
-                using (var reader = new StreamReader(stream)) return reader.ReadToEnd().GetBytes();
             }
         }
     }
